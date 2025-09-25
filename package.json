@@ -1,6 +1,6 @@
 {
   "name": "@verisense-network/sensespace-miniapp-sdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A browser SDK for SenseSpace MiniApp integration with user profile APIs and React hooks support",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
