@@ -59,7 +59,36 @@ echo -e "${YELLOW}📦 Previewing package contents...${NC}"
 npm pack --dry-run
 
 # 8. Show what version will be published
-NEXT_VERSION=$(npm version $VERSION_TYPE --no-git-tag-version --dry-run)
+echo -e "${YELLOW}📈 Calculating next version...${NC}"
+case $VERSION_TYPE in
+    "patch")
+        NEXT_VERSION=$(node -e "
+            const pkg = require('./package.json');
+            const parts = pkg.version.split('.');
+            parts[2] = parseInt(parts[2]) + 1;
+            console.log(parts.join('.'));
+        ")
+        ;;
+    "minor")
+        NEXT_VERSION=$(node -e "
+            const pkg = require('./package.json');
+            const parts = pkg.version.split('.');
+            parts[1] = parseInt(parts[1]) + 1;
+            parts[2] = 0;
+            console.log(parts.join('.'));
+        ")
+        ;;
+    "major")
+        NEXT_VERSION=$(node -e "
+            const pkg = require('./package.json');
+            const parts = pkg.version.split('.');
+            parts[0] = parseInt(parts[0]) + 1;
+            parts[1] = 0;
+            parts[2] = 0;
+            console.log(parts.join('.'));
+        ")
+        ;;
+esac
 echo -e "${YELLOW}📈 Version will be updated: ${CURRENT_VERSION} → ${NEXT_VERSION}${NC}"
 
 # 9. Confirm publish
