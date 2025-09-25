@@ -1,0 +1,30 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.App {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+input {
+  background-color: transparent;
+  border: 1px solid #ccc;
+  padding: 0.5em;
+  color: inherit;
+  border-radius: 4px;
+}
+
+input:focus {
+  outline: none;
+  border-color: #646cff;
+}
+
+@media (prefers-color-scheme: light) {
+  input {
+    border-color: #ccc;
+  }
+}

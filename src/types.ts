@@ -6,19 +6,19 @@ export interface SenseSpaceConfig {
 
 export interface UserProfile {
   id: string;
-  username?: string;
-  avatar?: string;
-  email?: string;
-  created_at?: string;
-  updated_at?: string;
+  email: string | null;
+  authType: string;
+  createdAt: string;
+  walletAddress: string;
+  // Allow for additional fields
   [key: string]: any;
 }
 
 export interface APIResponse<T = any> {
   success: boolean;
+  message: string | null;
   data?: T;
-  error?: string;
-  message?: string;
+  error?: string; // Keep error field for failure cases
 }
 
 export interface RequestOptions {

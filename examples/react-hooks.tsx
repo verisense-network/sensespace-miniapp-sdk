@@ -1,18 +1,19 @@
-// React Hook usage example
+// React Hook usage example - Simplified version
 // 
 // IMPORTANT: Import React hooks separately from '/react' path to avoid 
-// pulling in React dependencies in non-React environments
+// loading React dependencies in non-React environments
 import React, { useState } from 'react';
 import { createSenseSpaceClient, type SenseSpaceClient } from '../src';
 import { useUserProfile } from '../src/react';
 
 // Initialize client outside component to avoid recreation
-// In a real application, you would get the token from:
-// - Environment variables (in Node.js/build environment): process.env.REACT_APP_SENSESPACE_TOKEN
+// In a real application, you should get the token from:
+// - Environment variables: process.env.REACT_APP_SENSESPACE_TOKEN
 // - Secure storage/authentication service
 // - Props passed down from parent components
 const client = createSenseSpaceClient({
-  token: 'your-token-here' // Replace with your actual token
+  token: 'demo-token-replace-with-real-token', // Replace with your real token
+  endpoint: 'api.sensespace.xyz'
 });
 
 // Basic user profile component
@@ -22,7 +23,7 @@ function UserProfile({ userId }: { userId: string }) {
   if (loading) {
     return (
       <div className="loading">
-        <p>Loading user profile...</p>
+        <p>🔄 Loading user profile...</p>
       </div>
     );
   }
@@ -39,7 +40,7 @@ function UserProfile({ userId }: { userId: string }) {
   if (!data) {
     return (
       <div className="no-data">
-        <p>No user profile found</p>
+        <p>User profile not found</p>
       </div>
     );
   }
@@ -47,26 +48,15 @@ function UserProfile({ userId }: { userId: string }) {
   return (
     <div className="user-profile">
       <div className="profile-header">
-        {data.avatar && (
-          <img
-            src={data.avatar}
-            alt="User avatar"
-            className="avatar"
-            style={{ width: '80px', height: '80px', borderRadius: '50%' }}
-          />
-        )}
-        <h2>{data.username || `User ${data.id}`}</h2>
+        <h2>User Information</h2>
       </div>
 
       <div className="profile-details">
         <p><strong>User ID:</strong> {data.id}</p>
-        {data.email && <p><strong>Email:</strong> {data.email}</p>}
-        {data.created_at && (
-          <p><strong>Registration:</strong> {new Date(data.created_at).toLocaleDateString('en-US')}</p>
-        )}
-        {data.updated_at && (
-          <p><strong>Last updated:</strong> {new Date(data.updated_at).toLocaleDateString('en-US')}</p>
-        )}
+        <p><strong>Email:</strong> {data.email || 'Not set'}</p>
+        <p><strong>Auth Type:</strong> {data.authType}</p>
+        <p><strong>Wallet Address:</strong> {data.walletAddress}</p>
+        <p><strong>Registration Time:</strong> {new Date(data.createdAt).toLocaleDateString('en-US')}</p>
       </div>
 
       <button onClick={refetch} className="refresh-btn">

@@ -39,18 +39,22 @@ class HTTPClient {
 
       clearTimeout(timeoutId);
 
-      const data = await response.json();
+      const responseData = await response.json();
 
       if (!response.ok) {
         return {
           success: false,
-          error: data.message || `HTTP ${response.status}: ${response.statusText}`
+          message: responseData.message || null,
+          error: responseData.message || `HTTP ${response.status}: ${response.statusText}`
         };
       }
 
+      // API response structure already contains success, message, data fields
+      // Return the entire response structure directly
       return {
-        success: true,
-        data: data
+        success: responseData.success,
+        message: responseData.message,
+        data: responseData.data
       };
     } catch (error) {
       clearTimeout(timeoutId);
@@ -59,17 +63,20 @@ class HTTPClient {
         if (error.name === 'AbortError') {
           return {
             success: false,
+            message: null,
             error: 'Request timeout'
           };
         }
         return {
           success: false,
+          message: null,
           error: error.message
         };
       }
 
       return {
         success: false,
+        message: null,
         error: 'Unknown error occurred'
       };
     }
@@ -104,6 +111,7 @@ class SenseSpaceSDK implements SenseSpaceClient {
     if (!userId) {
       return {
         success: false,
+        message: null,
         error: 'User ID is required'
       };
     }

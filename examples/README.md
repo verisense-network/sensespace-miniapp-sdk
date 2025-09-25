@@ -21,11 +21,11 @@ npx tsc examples/basic-usage.ts --target es2020 --module commonjs
 node examples/basic-usage.js
 ```
 
-### 2. `react-hooks.tsx` - React Hook Example
+### 2. `react-hooks.tsx` - React Hook Example (Simplified)
 Shows how to use the SDK in React applications:
-- Basic usage of `useUserProfile` Hook
+- Basic `useUserProfile` Hook usage
 - Loading states and error handling
-- Auto-refresh functionality
+- Auto-retry functionality
 - Conditional rendering
 
 **Features:**
@@ -34,7 +34,30 @@ Shows how to use the SDK in React applications:
 - User-friendly interface
 - Responsive design
 
-### 3. `vanilla-js.html` - Pure JavaScript Example
+### 3. `react-vite-app/` - Complete React + Vite Project ⭐
+**Recommended!** Complete modern React project example:
+- ✅ **Vite Build** - Lightning fast development experience
+- ✅ **TypeScript Support** - Type safety
+- ✅ **Complete Project Structure** - Ready to run
+- ✅ **Modern UI Design** - Beautiful user interface
+- ✅ **Real-time Data Loading** - Shows real usage scenarios
+
+**Quick Start:**
+```bash
+cd examples/react-vite-app
+npm install
+npm run dev
+```
+
+### 4. `advanced-react-simplified.tsx` - Advanced React Example (Simplified)
+Simplified version of production-grade React application architecture:
+- Context API state management
+- Error Boundary components
+- Dynamic SDK initialization
+- Complete error handling
+- TypeScript type safety
+
+### 5. `vanilla-js.html` - Pure JavaScript Example
 Complete HTML page demonstrating how to use the SDK directly in the browser:
 - No framework dependencies
 - Beautiful user interface
