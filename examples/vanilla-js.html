@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SenseSpace SDK - Vanilla JS Example</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #555;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #007cba;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-right: 10px;
+    }
+
+    button:hover {
+      background-color: #005a87;
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .profile {
+      background-color: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+      border-left: 4px solid #007cba;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin-right: 15px;
+      object-fit: cover;
+    }
+
+    .profile h3 {
+      margin: 0;
+      color: #333;
+    }
+
+    .profile-details {
+      line-height: 1.6;
+    }
+
+    .profile-details p {
+      margin: 5px 0;
+    }
+
+    .loading {
+      color: #666;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .error {
+      color: #d32f2f;
+      background-color: #ffebee;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 20px 0;
+    }
+
+    .success {
+      color: #2e7d32;
+      background-color: #e8f5e8;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 20px 0;
+    }
+
+    .code {
+      background-color: #f4f4f4;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+    }
+
+    .status {
+      display: inline-block;
+      margin-left: 10px;
+      font-size: 12px;
+      color: #666;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>🌐 SenseSpace SDK Demo</h1>
+
+    <div class="input-group">
+      <label for="tokenInput">Access Token:</label>
+      <input type="password" id="tokenInput" placeholder="Enter your access token" />
+    </div>
+
+    <div class="input-group">
+      <label for="endpointInput">API Endpoint (optional):</label>
+      <input type="text" id="endpointInput" value="api.sensespace.xyz" placeholder="api.sensespace.xyz" />
+    </div>
+
+    <div class="input-group">
+      <label for="userIdInput">User ID:</label>
+      <input type="text" id="userIdInput" value="demo-user" placeholder="Enter user ID to query" />
+    </div>
+
+    <div style="margin: 20px 0;">
+      <button onclick="initializeSDK()">Initialize SDK</button>
+      <button onclick="loadProfile()" id="loadBtn" disabled>Get User Profile</button>
+      <button onclick="clearResult()">Clear Result</button>
+      <span id="status" class="status"></span>
+    </div>
+
+    <div id="result"></div>
+  </div>
+
+  <!-- Import SDK using ES modules -->
+  <script type="module">
+    // Note: In real projects, you should import from npm or CDN
+    // import { createSenseSpaceClient } from '@verisense-network/sensespace-miniapp-sdk';
+
+    // Using local build for demonstration
+    import { createSenseSpaceClient } from '../dist/index.mjs';
+
+    let client = null;
+    let isInitialized = false;
+
+    // Mount functions to global scope for HTML onclick handlers
+    window.initializeSDK = function () {
+      const token = document.getElementById('tokenInput').value.trim();
+      const endpoint = document.getElementById('endpointInput').value.trim();
+      const statusEl = document.getElementById('status');
+      const loadBtn = document.getElementById('loadBtn');
+
+      if (!token) {
+        showError('Please enter access token');
+        return;
+      }
+
+      try {
+        statusEl.textContent = 'Initializing...';
+
+        // Create client instance
+        client = createSenseSpaceClient({
+          token: token,
+          endpoint: endpoint || 'api.sensespace.xyz'
+        });
+
+        isInitialized = true;
+        loadBtn.disabled = false;
+        statusEl.textContent = '✅ SDK initialized successfully';
+
+        showSuccess(`SDK initialized successfully! Endpoint: ${endpoint || 'api.sensespace.xyz'}`);
+
+      } catch (error) {
+        statusEl.textContent = '❌ Initialization failed';
+        showError(`Initialization failed: ${error.message}`);
+      }
+    };
+
+    window.loadProfile = async function () {
+      const userId = document.getElementById('userIdInput').value.trim();
+      const resultDiv = document.getElementById('result');
+      const statusEl = document.getElementById('status');
+
+      if (!isInitialized || !client) {
+        showError('Please initialize SDK first');
+        return;
+      }
+
+      if (!userId) {
+        showError('Please enter user ID');
+        return;
+      }
+
+      try {
+        statusEl.textContent = 'Getting user profile...';
+        resultDiv.innerHTML = '<p class="loading">⏳ Loading...</p>';
+
+        // Call SDK method to get user profile
+        const response = await client.getUserProfile(userId, {
+          timeout: 8000 // 8 seconds timeout
+        });
+
+        if (response.success && response.data) {
+          const profile = response.data;
+          statusEl.textContent = '✅ Success';
+
+          // Render user profile
+          resultDiv.innerHTML = `
+            <div class="profile">
+              <div class="profile-header">
+                ${profile.avatar ? `<img src="${profile.avatar}" alt="User avatar" class="avatar" />` : ''}
+                <div>
+                  <h3>${profile.username || 'User ' + profile.id}</h3>
+                  <p>ID: <span class="code">${profile.id}</span></p>
+                </div>
+              </div>
+              
+              <div class="profile-details">
+                ${profile.email ? `<p><strong>Email:</strong> ${profile.email}</p>` : ''}
+                ${profile.created_at ? `<p><strong>Registration:</strong> ${new Date(profile.created_at).toLocaleString('en-US')}</p>` : ''}
+                ${profile.updated_at ? `<p><strong>Last updated:</strong> ${new Date(profile.updated_at).toLocaleString('en-US')}</p>` : ''}
+                
+                <div style="margin-top: 15px;">
+                  <button onclick="loadProfile()">🔄 Refresh</button>
+                  <small style="color: #666; margin-left: 10px;">
+                    Retrieved at: ${new Date().toLocaleString('en-US')}
+                  </small>
+                </div>
+              </div>
+            </div>
+          `;
+
+        } else {
+          statusEl.textContent = '❌ Failed';
+          showError(response.error || 'Failed to get user profile');
+        }
+
+      } catch (error) {
+        statusEl.textContent = '❌ Request exception';
+        showError(`Request exception: ${error.message}`);
+      }
+    };
+
+    window.clearResult = function () {
+      document.getElementById('result').innerHTML = '';
+      document.getElementById('status').textContent = '';
+    };
+
+    // Helper functions
+    function showError(message) {
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = `<div class="error">❌ ${message}</div>`;
+    }
+
+    function showSuccess(message) {
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = `<div class="success">✅ ${message}</div>`;
+    }
+
+    // Page load initialization
+    document.addEventListener('DOMContentLoaded', function () {
+      console.log('SenseSpace SDK demo page loaded');
+      console.log('Please enter your access token and click "Initialize SDK" to start');
+    });
+
+  </script>
+</body>
+
+</html>
