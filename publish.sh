@@ -14,7 +14,7 @@ NC='\033[0m' # No Color
 # Get version type
 VERSION_TYPE=${1:-patch}
 
-echo -e "${YELLOW}🚀 Preparing to publish @verisense-network/sensespace-did-ts...${NC}"
+echo -e "${YELLOW}🚀 Preparing to publish @verisense-network/sensespace-miniapp-sdk...${NC}"
 
 # 1. Check Git status
 if [[ $(git status --porcelain) ]]; then
@@ -38,19 +38,31 @@ if ! npm whoami > /dev/null 2>&1; then
     exit 1
 fi
 
-# 4. Run tests (if available)
-echo -e "${YELLOW}🧪 Running tests...${NC}"
-npm test || echo -e "${YELLOW}⚠️  Tests skipped${NC}"
+# 4. Check current version
+CURRENT_VERSION=$(node -p "require('./package.json').version")
+echo -e "${YELLOW}📋 Current version: ${CURRENT_VERSION}${NC}"
 
-# 5. Clean and build
+# 5. Run tests (if available)
+echo -e "${YELLOW}🧪 Running tests...${NC}"
+if npm run test >/dev/null 2>&1; then
+    echo -e "${GREEN}✅ Tests passed${NC}"
+else
+    echo -e "${YELLOW}⚠️  Tests skipped or failed${NC}"
+fi
+
+# 6. Clean and build
 echo -e "${YELLOW}🔨 Building project...${NC}"
 npm run build
 
-# 6. Preview package contents
+# 7. Preview package contents
 echo -e "${YELLOW}📦 Previewing package contents...${NC}"
 npm pack --dry-run
 
-# 7. Confirm publish
+# 8. Show what version will be published
+NEXT_VERSION=$(npm version $VERSION_TYPE --no-git-tag-version --dry-run)
+echo -e "${YELLOW}📈 Version will be updated: ${CURRENT_VERSION} → ${NEXT_VERSION}${NC}"
+
+# 9. Confirm publish
 echo -e "${YELLOW}❓ Confirm publishing $VERSION_TYPE version? (y/N)${NC}"
 read -r response
 if [[ ! "$response" =~ ^[Yy]$ ]]; then
@@ -58,13 +70,13 @@ if [[ ! "$response" =~ ^[Yy]$ ]]; then
     exit 1
 fi
 
-# 8. Update version and publish
+# 10. Update version and publish
 echo -e "${GREEN}✨ Publishing version...${NC}"
 npm version $VERSION_TYPE
 npm publish
 
-# 9. Push tags
+# 11. Push tags
 echo -e "${GREEN}📌 Pushing Git tags...${NC}"
 git push --follow-tags
 
-echo -e "${GREEN}🎉 Publishing successful! Package URL: https://www.npmjs.com/package/@verisense-network/sensespace-did-ts${NC}"
+echo -e "${GREEN}🎉 Publishing successful! Package URL: https://www.npmjs.com/package/@verisense-network/sensespace-miniapp-sdk${NC}"
