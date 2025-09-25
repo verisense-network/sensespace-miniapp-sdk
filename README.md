@@ -275,22 +275,6 @@ class ErrorBoundary extends React.Component {
 </ErrorBoundary>
 ```
 
-### 3. Custom Endpoint Configuration
-
-```typescript
-// For development
-const devClient = createSenseSpaceClient({
-  token: 'dev-token',
-  endpoint: 'dev-api.sensespace.xyz'
-});
-
-// For production
-const prodClient = createSenseSpaceClient({
-  token: 'prod-token',
-  endpoint: 'api.sensespace.xyz'
-});
-```
-
 ## Browser Support
 
 This SDK is designed for modern browsers that support:

@@ -197,40 +197,6 @@ const response = await client.getUserProfile(userId, {
 });
 ```
 
-### Endpoint Configuration for Different Environments
-```typescript
-const getEndpoint = () => {
-  if (process.env.NODE_ENV === 'development') {
-    return 'dev-api.sensespace.xyz';
-  }
-  return 'api.sensespace.xyz';
-};
-
-const client = createSenseSpaceClient({
-  token: getToken(),
-  endpoint: getEndpoint()
-});
-```
-
-## 📱 Mobile Adaptation
-
-The SDK fully supports mobile browsers:
-
-```css
-/* Responsive styling example */
-@media (max-width: 768px) {
-  .user-profile {
-    padding: 10px;
-    font-size: 14px;
-  }
-  
-  .profile-avatar {
-    width: 60px;
-    height: 60px;
-  }
-}
-```
-
 ## 🐛 Debugging Tips
 
 1. **Enable Verbose Logging**
